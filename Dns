@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Colors
+green="\e[92m"
+cyan="\e[96m"
+purple="\e[95m"
+yellow="\e[93m"
+red="\e[91m"
+reset="\e[0m"
+
+# CIDR Ranges
+cidrs=(
+    "5.37.128.0/17"
+    "31.29.0.0/16"
+    "86.96.0.0/12"
+    "91.75.0.0/17"
+    "176.205.0.0/16"
+    "185.46.192.0/22"
+    "194.170.0.0/16"
+    "213.42.0.0/16"
+    "217.165.0.0/17"
+)
+
+# Function to convert CIDR to random IP
+generate_random_ip() {
+    cidr=$1
+    IFS=/ read ip mask <<< "$cidr"
+    IFS=. read -r i1 i2 i3 i4 <<< "$ip"
+
+    ip_dec=$(( (i1<<24) + (i2<<16) + (i3<<8) + i4 ))
+    hosts=$(( (1 << (32 - mask)) - 2 ))
+    rand_host=$((RANDOM<<15 | RANDOM))
+    rand_host=$((rand_host % hosts))
+    final_ip_dec=$((ip_dec + rand_host + 1))
+    
+    echo "$(( (final_ip_dec>>24) & 255 )).$(( (final_ip_dec>>16) & 255 )).$(( (final_ip_dec>>8) & 255 )).$(( final_ip_dec & 255 ))"
+}
+
+# Stylish Panel Header
+clear
+echo -e "${purple}"
+echo "╔═════════════════════════════════════════════╗"
+echo -e "║${cyan}          ISP RANDOM IP GENERATOR PANEL       ${purple}║"
+echo "╠═════════════════════════════════════════════╣"
+echo -e "║${yellow}         Channel: DNS | Codm                   ${purple}║"
+echo -e "║${yellow}         Creator ID: @Mebot9                  ${purple}║"
+echo "╚═════════════════════════════════════════════╝"
+echo -e "${reset}"
+
+# Select random CIDR and generate IP
+random_index=$((RANDOM % ${#cidrs[@]}))
+selected_cidr=${cidrs[$random_index]}
+generated_ip=$(generate_random_ip "$selected_cidr")
+
+# Show result
+echo -e "${green}Selected Range: ${selected_cidr}${reset}"
+echo -e "${cyan}Generated IP:   ${generated_ip}${reset}"
+echo
