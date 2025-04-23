@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Generate a random IPv4 address
+ip=$(shuf -i 1-255 -n 1).$(shuf -i 0-255 -n 1).$(shuf -i 0-255 -n 1).$(shuf -i 1-254 -n 1)
+
+# Generate a random port number (commonly used for gaming or fast connection)
+port=$(shuf -i 20000-60000 -n 1)
+
+# Output the clean endpoint
+echo "Endpoint: $ip:$port"
