@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo "Generated Endpoints with Ping:"
+echo "------------------------------"
+
+for i in {1..5}; do
+  # Generate random IP
+  ip=$(shuf -i 1-255 -n 1).$(shuf -i 0-255 -n 1).$(shuf -i 0-255 -n 1).$(shuf -i 1-254 -n 1)
+
+  # Generate random port
+  port=$(shuf -i 20000-60000 -n 1)
+
+  # Ping the IP (1 packet, 1-second timeout)
+  ping_result=$(ping -c 1 -W 1 "$ip" | grep 'time=' | awk -F'time=' '{print $2}' | awk '{print $1 " ms"}')
+  
+  # If no ping response
+  if [ -z "$ping_result" ]; then
+    ping_result="No response"
+  fi
+
+  # Show Endpoint and ping result
+  echo "$i) Endpoint: $ip:$port | Ping: $ping_result"
+done
